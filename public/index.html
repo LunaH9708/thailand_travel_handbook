@@ -172,7 +172,7 @@
   <section id="booked">
     <div class="sec-title"><span class="num">3</span> 已确认的机票 / 酒店 / 行程</div>
     <div id="bookedList"></div>
-    <div class="nodata" style="margin-top:10px">📌 机票座位号、酒店地址/电话、确认函号 等详细信息，等你发我截图后我会自动补进这里（见文末说明）。</div>
+    <div class="nodata" style="margin-top:10px">📌 航班信息已补全。酒店地址 / 前台电话 / 确认函号、以及选座后的座位号，等确认函/值机截图到齐后再补。</div>
   </section>
 
   <!-- 4. 逐日行程 -->
@@ -206,17 +206,21 @@ const DAY_COLORS = ['#e4572e','#f3a712','#2e8b57','#1f7a8c','#8e44ad','#d6336c',
 
 // 机票（tz=当地时区偏移；dep/arr 为当地时间）
 const FLIGHTS = [
-  {no:'MU502', title:'✈ MU502 上海浦东 T1 → 清迈', dep:{y:2026,m:9,d:24,h:10,mi:15,tz:8}, arr:{y:2026,m:9,d:24,h:13,mi:25,tz:7},
-   depPlace:'上海浦东国际机场 T1', arrPlace:'清迈国际机场 Chiang Mai Intl', q:'Shanghai Pudong International Airport Terminal 1'},
+  {no:'MU205', title:'✈ MU205 上海浦东 T1 → 清迈', dep:{y:2026,m:9,d:24,h:10,mi:0,tz:8}, arr:{y:2026,m:9,d:24,h:13,mi:25,tz:7},
+   depPlace:'上海浦东国际机场 T1', arrPlace:'清迈国际机场 Chiang Mai Intl', q:'Shanghai Pudong International Airport Terminal 1',
+   pax:'HUANG / LU', ticket:'7819440954184', pnr:'MY2EBE', order:'MT20773863205902827526205', price:'¥4450',
+   note:'波音 737-200（中），实际以东航出票为准'},
   {no:'MU8648', title:'✈ MU8648 普吉 → 上海浦东 T1', dep:{y:2026,m:10,d:3,h:23,mi:5,tz:7}, arr:{y:2026,m:10,d:4,h:5,mi:20,tz:8},
-   depPlace:'普吉国际机场', arrPlace:'上海浦东国际机场 T1', q:'Phuket International Airport'}
+   depPlace:'普吉国际机场', arrPlace:'上海浦东国际机场 T1', q:'Phuket International Airport',
+   pax:'HUANG / LU', ticket:'7819440954184', pnr:'MY2EBE', order:'MT20773863205902827526205', price:'¥4450',
+   note:'MU8648 实际乘坐上海航空 FM858，波音 737-200（中）'}
 ];
 
 // 逐日行程。time 为当地时间（泰国 UTC+7，除非该条注明 tz）。place/q 用于点击唤起 Google 导航。
 const DAYS = [
   { day:1, date:'2026-09-24', city:'清迈', stay:'罗望子村 Tamarind Village（住 D1–D2）',
     items:[
-      {time:'10:15', tz:8, label:'浦东 T1 飞清迈 · MU502', book:'机票', place:'上海浦东国际机场 T1', q:'Shanghai Pudong International Airport Terminal 1'},
+      {time:'10:00', tz:8, label:'浦东 T1 飞清迈 · MU205', book:'机票', place:'上海浦东国际机场 T1', q:'Shanghai Pudong International Airport Terminal 1'},
       {time:'15:00', label:'预计 15:00 入住 + 古城内逛逛吃饭', place:'清迈古城', q:'Chiang Mai Old City'},
       {time:'19:00', label:"Let's Relax Thapae 店 · 泰式按摩 2h（已付）", book:'已付', place:"Let's Relax Spa Tha Phae Chiang Mai", q:"Let's Relax Tha Phae Chiang Mai"}
     ]},
@@ -257,13 +261,13 @@ const DAYS = [
       {time:'16:00', label:'网球课 1h · KN Tennis/CCC（已约 4–5PM）', book:'已约', place:'Chiang Mai Tennis Club', q:'Chiang Mai Tennis Club'},
       {time:'18:00', label:'清迈大学日落', place:'清迈大学', q:'Chiang Mai University'}
     ]},
-  { day:8, date:'2026-10-01', city:'普吉岛', stay:'梅丽莎别墅 Melissa Villa（住 D8）',
+  { day:8, date:'2026-10-01', city:'普吉岛', stay:'Malisa Villa Suites 玛丽莎别墅酒店（住 D8）',
     items:[
       {time:'10:00', label:'抵达普吉岛', place:'普吉国际机场', q:'Phuket International Airport'},
       {time:'14:00', label:'A Blanket & A Pillow 悬崖咖啡', place:'A Blanket and a Pillow Phuket', q:'A Blanket and a Pillow Phuket'},
       {time:'17:00', label:'Kata 冲浪', place:'Kata Beach', q:'Kata Beach Phuket'}
     ]},
-  { day:9, date:'2026-10-02', city:'普吉岛', stay:'卡塔坦尼 Kata Thani（住 D9）',
+  { day:9, date:'2026-10-02', city:'普吉岛', stay:'Katathani Phuket Beach Resort 卡塔坦尼海滩度假村（住 D9）',
     items:[
       {time:'08:00', label:'出海：深潜 ×2 + 浮潜（已约，已付 1200 RMB）', book:'已付', place:'Kata Thani Beach', q:'Kata Thani Phuket Beach Resort'},
       {time:'07:00', note:'早上把行李收拾好，晚上回来直接换酒店'}
@@ -273,7 +277,7 @@ const DAYS = [
       {time:'08:00', label:'早上冲浪', place:'Kata Beach', q:'Kata Beach Phuket'},
       {time:'12:00', label:'中午退房', note:'退房后寄存行李'},
       {time:'14:00', label:'普吉老镇逛逛 + Phumontra Massage 马杀鸡（提前预约）', book:'待预约', place:'Phumontra Massage Phuket', q:'Phumontra Massage Phuket Old Town'},
-      {time:'23:05', label:'普吉 → 上海浦东 T1 · MU8648', book:'机票', place:'普吉国际机场', q:'Phuket International Airport'}
+      {time:'23:05', label:'普吉 → 上海浦东 T1 · MU8648（实际 FM858）', book:'机票', place:'普吉国际机场', q:'Phuket International Airport'}
     ]}
 ];
 
@@ -327,7 +331,7 @@ const TODO = [
   {t:'确认泰国入境政策（免签 30 天 / 落地签）并准备回程机票证明', s:'打印或手机存 MU8648 行程单'},
   {t:'换泰铢现金 + 带一张银联/Visa 卡', s:'泰国多收现金，711/夜市常用'},
   {t:'买 eSIM 或开通国际漫游（建议 AIS/True 游客卡）', s:'落地即用，导航依赖网络'},
-  {t:'机票线上值机（MU502 / MU8648）', s:'东航 App，起飞前 48h 开放'},
+  {t:'机票线上值机（MU205 / MU8648）', s:'东航 App，起飞前 48h 开放'},
   {t:'把 5 家酒店确认函存手机相册 + 打印 1 份', s:'地址/电话待截图补全'},
   {t:'买旅行保险（含潜水/冲浪责任）', s:'D9 深潜、D8/D10 冲浪'},
   {t:'带转换插头（泰国 A/B/C/F 型，220V）', s:'国标插头需转换器'},
@@ -485,19 +489,25 @@ function renderBooked(){
   // 机票
   FLIGHTS.forEach(f=>{
     h += `<div class="card"><div class="book"><div class="ic">✈️</div><div class="b-main">
-      <div class="b-t">${f.title} <span class="tag todo">待补截图</span></div>
+      <div class="b-t">${f.title} <span class="tag ok">已出票</span></div>
       <div class="b-d">起飞 ${fmtTZ(toUTC(f.dep),f.dep.tz)}（当地 UTC+${f.dep.tz}） → 到达 ${fmtTZ(toUTC(f.arr),f.arr.tz)}（当地 UTC+${f.arr.tz}）</div>
       <div class="b-d">出发地：${f.depPlace}<br>到达地：${f.arrPlace}</div>
-      <div class="need">座位号 / 票号 / 航站楼 等，等你发机票截图后补全。</div>
+      <div class="b-d" style="font-size:12px;color:var(--sub);margin-top:4px">乘机人：${f.pax || '—'} · 票号：${f.ticket || '—'} · 预订号：${f.pnr || '—'}<br>订单号：${f.order || '—'} · 总额：${f.price || '—'}${f.note ? ' · '+f.note : ''}</div>
     </div></div></div>`;
   });
-  // 酒店
-  const hotels=[['罗望子村 Tamarind Village','清迈古城内','D1–D2'],['Hotel Loy','清迈','D3–D5'],['贝拉娜拉 Bela Nara','清迈','D6–D7'],['梅丽莎别墅 Melissa Villa','普吉','D8'],['卡塔坦尼 Kata Thani','普吉 Kata 海滩','D9']];
+  // 酒店（地址 / 电话从确认函再补）
+  const hotels=[
+    ['Tamarind Village 罗望子村酒店','清迈古城内','D1–D2','兰纳房 · 1间'],
+    ['Hotel Loy Chiang Mai - Adult Only 清迈罗伊酒店','清迈','D3–D5','豪华房带浴缸 · 1间'],
+    ['Bella Nara Hotel Chiang Mai 清迈贝拉娜拉酒店','清迈','D6–D7','豪华特大床房 · 1间'],
+    ['Malisa Villa Suites 普吉岛玛丽莎别墅酒店','普吉','D8','泳池别墅 · 1间'],
+    ['Katathani Phuket Beach Resort 普吉岛卡塔坦尼海滩度假村','普吉 Kata 海滩','D9','精致套房（坦尼楼）· 1间']
+  ];
   hotels.forEach(ht=>{
     h += `<div class="card"><div class="book"><div class="ic">🏨</div><div class="b-main">
       <div class="b-t">${ht[0]} <span class="tag ok">已定</span></div>
-      <div class="b-d">📍 ${ht[1]}<br>🗓 住 ${ht[2]}</div>
-      <div class="need">地址 / 电话 / 确认函号，等你发酒店截图后补全。</div>
+      <div class="b-d">📍 ${ht[1]}<br>🗓 住 ${ht[2]} · 🛏 ${ht[3]}</div>
+      <div class="need">地址 / 前台电话 / 确认函号，待酒店确认函截图补全。</div>
     </div></div></div>`;
   });
   // 已约活动摘要
