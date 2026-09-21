@@ -1,0 +1,9 @@
+name = "chiangmai-phuket-handbook"
+main = "src/worker.js"
+compatibility_date = "2024-11-01"
+
+# 用 Workers 的 Static Assets 直接托管这个单文件网站
+# 每次往 main 分支 push，Cloudflare 就会自动重新部署
+[assets]
+directory = "public"
+binding = "ASSETS"
